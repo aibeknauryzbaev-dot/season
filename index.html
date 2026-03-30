@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жыл мезгілдері - 4 сынып</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f9ff;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23bae6fd' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        .bounce-anim {
+            animation: bounce 1s;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake-anim {
+            animation: shake 0.4s;
+        }
+
+        /* Drag and Drop Styles */
+        .draggable-item {
+            cursor: grab;
+            transition: all 0.2s;
+            touch-action: none; /* Prevent scrolling while dragging on mobile */
+        }
+        .draggable-item:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+        }
+        .drag-over {
+            background-color: rgba(255, 255, 255, 0.8) !important;
+            border: 2px dashed #4ade80 !important;
+            transform: scale(1.02);
+        }
+
+        /* Custom Radio Buttons for Feedback */
+        .emoji-radio input[type="radio"] {
+            display: none;
+        }
+        .emoji-radio label {
+            cursor: pointer;
+            filter: grayscale(100%);
+            transition: all 0.3s ease;
+            font-size: 3rem;
+        }
+        .emoji-radio input[type="radio"]:checked + label {
+            filter: grayscale(0%);
+            transform: scale(1.2);
+        }
+
+        /* Confetti Canvas */
+        #confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 p-4 sm:p-8 flex flex-col items-center">
+
+    <canvas id="confetti"></canvas>
+
+    <!-- Header -->
+    <header class="text-center mb-8">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-blue-600 drop-shadow-md bg-white px-8 py-4 rounded-full inline-block border-4 border-blue-200">
+            🌍 Жыл мезгілдері ☀️❄️🌸🍁
+        </h1>
+    </header>
+
+    <!-- MAIN MENU PAGE -->
+    <main id="home-page" class="page active w-full max-w-4xl flex flex-col items-center">
+        <p class="text-xl sm:text-2xl text-center mb-10 font-bold text-gray-700 bg-white/80 p-4 rounded-2xl">
+            Сәлем, жас дос! Өзіңе ұнаған бөлімді таңдап, біліміңді сынап көр!
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full px-4">
+            <!-- Button 1 -->
+            <button onclick="showPage('game-page')" class="group relative bg-green-400 hover:bg-green-500 text-white rounded-3xl p-8 shadow-[0_8px_0_#16a34a] hover:shadow-[0_4px_0_#16a34a] hover:translate-y-1 transition-all flex flex-col items-center justify-center gap-4">
+                <span class="text-6xl group-hover:scale-110 transition-transform">🎮</span>
+                <span class="text-2xl font-bold">Бекіту ойыны</span>
+            </button>
+
+            <!-- Button 2 -->
+            <button onclick="showPage('quiz-page')" class="group relative bg-yellow-400 hover:bg-yellow-500 text-white rounded-3xl p-8 shadow-[0_8px_0_#ca8a04] hover:shadow-[0_4px_0_#ca8a04] hover:translate-y-1 transition-all flex flex-col items-center justify-center gap-4">
+                <span class="text-6xl group-hover:scale-110 transition-transform">📝</span>
+                <span class="text-2xl font-bold">Өзін-өзі бағалау</span>
+            </button>
+
+            <!-- Button 3 -->
+            <button onclick="showPage('feedback-page')" class="group relative bg-purple-400 hover:bg-purple-500 text-white rounded-3xl p-8 shadow-[0_8px_0_#9333ea] hover:shadow-[0_4px_0_#9333ea] hover:translate-y-1 transition-all flex flex-col items-center justify-center gap-4">
+                <span class="text-6xl group-hover:scale-110 transition-transform">💬</span>
+                <span class="text-2xl font-bold">Кері байланыс</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- GAME PAGE -->
+    <section id="game-page" class="page w-full max-w-5xl">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-green-200 relative">
+            <button onclick="showPage('home-page')" class="absolute -top-5 -left-5 bg-red-400 text-white font-bold py-3 px-6 rounded-full shadow-[0_5px_0_#b91c1c] hover:translate-y-1 hover:shadow-[0_2px_0_#b91c1c] transition-all">
+                ⬅️ Басты бет
+            </button>
+
+            <h2 class="text-3xl font-bold text-center text-green-600 mb-4 mt-4 sm:mt-0">Бекіту ойыны</h2>
+            <p class="text-center text-lg mb-8 text-gray-600 font-semibold bg-green-50 p-3 rounded-xl border border-green-100">
+                Сөздерді тиісті жыл мезгіліне сүйреп апар (немесе алдымен сөзді, сосын мезгілді бас)!
+            </p>
+
+            <!-- Drop Zones -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="drop-zone bg-blue-100 border-4 border-blue-300 rounded-2xl p-4 min-h-[200px] flex flex-col items-center transition-all" data-season="qys">
+                    <h3 class="text-2xl font-bold text-blue-700 mb-2">Қыс ❄️</h3>
+                    <div class="items-container w-full flex-grow flex flex-col gap-2"></div>
+                </div>
+                <div class="drop-zone bg-green-100 border-4 border-green-300 rounded-2xl p-4 min-h-[200px] flex flex-col items-center transition-all" data-season="koktem">
+                    <h3 class="text-2xl font-bold text-green-700 mb-2">Көктем 🌸</h3>
+                    <div class="items-container w-full flex-grow flex flex-col gap-2"></div>
+                </div>
+                <div class="drop-zone bg-yellow-100 border-4 border-yellow-300 rounded-2xl p-4 min-h-[200px] flex flex-col items-center transition-all" data-season="jaz">
+                    <h3 class="text-2xl font-bold text-yellow-700 mb-2">Жаз ☀️</h3>
+                    <div class="items-container w-full flex-grow flex flex-col gap-2"></div>
+                </div>
+                <div class="drop-zone bg-orange-100 border-4 border-orange-300 rounded-2xl p-4 min-h-[200px] flex flex-col items-center transition-all" data-season="kuz">
+                    <h3 class="text-2xl font-bold text-orange-700 mb-2">Күз 🍁</h3>
+                    <div class="items-container w-full flex-grow flex flex-col gap-2"></div>
+                </div>
+            </div>
+
+            <!-- Draggable Items -->
+            <div id="drag-items-container" class="flex flex-wrap justify-center gap-3 p-4 bg-gray-100 rounded-2xl border-2 border-dashed border-gray-300 min-h-[150px]">
+                <!-- Қыс -->
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="qys">Үскірік аяз бен боран ❄️</div>
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="qys">Табиғаттың ұйқыға кетуі 💤</div>
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="qys">Қысқы күн тоқырауы 🌑</div>
+                
+                <!-- Көктем -->
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="koktem">Жыл құстарының оралуы 🕊️</div>
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="koktem">Күн мен түннің теңелуі ⚖️</div>
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="koktem">Қар еріп, көк майса шығуы 🌱</div>
+                
+                <!-- Жаз -->
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="jaz">Шөп шабу, жайлауға шығу 🐎</div>
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="jaz">Ең ұзақ күн, ең қысқа түн ☀️</div>
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="jaz">Аптап ыстық пен қуаңшылық 🏜️</div>
+                
+                <!-- Күз -->
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="kuz">Астық жинау науқаны 🌾</div>
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="kuz">Қарасуық түсіп, үсік жүруі 🥶</div>
+                <div class="draggable-item bg-white px-3 py-2 rounded-xl shadow-md border-2 border-gray-200 font-bold text-gray-700 select-none text-sm md:text-base text-center" draggable="true" data-target="kuz">Күннің біртіндеп қысқаруы 📉</div>
+            </div>
+
+            <!-- Game Modal -->
+            <div id="game-success-modal" class="hidden absolute inset-0 bg-white/95 rounded-3xl flex flex-col items-center justify-center z-10">
+                <div class="text-7xl mb-4 bounce-anim">🏆</div>
+                <h3 class="text-4xl font-bold text-green-500 mb-4">Жарайсың!</h3>
+                <p class="text-xl text-gray-600 mb-6 font-semibold">Сен барлық сөздерді дұрыс орналастырдың!</p>
+                <button onclick="resetGame()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-[0_5px_0_#2563eb] hover:translate-y-1 hover:shadow-[0_2px_0_#2563eb] transition-all">
+                    Қайта ойнау 🔄
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SELF-ASSESSMENT PAGE (ӨЗІН-ӨЗІ БАҒАЛАУ) -->
+    <section id="quiz-page" class="page w-full max-w-4xl">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-yellow-200 relative">
+            <button onclick="showPage('home-page')" class="absolute -top-5 -left-5 bg-red-400 text-white font-bold py-3 px-6 rounded-full shadow-[0_5px_0_#b91c1c] hover:translate-y-1 hover:shadow-[0_2px_0_#b91c1c] transition-all z-10">
+                ⬅️ Басты бет
+            </button>
+
+            <h2 class="text-3xl font-bold text-center text-yellow-600 mb-8 mt-4 sm:mt-0">Өзін-өзі бағалау</h2>
+
+            <!-- Student Input Form -->
+            <div class="bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-100 mb-8 max-w-2xl mx-auto">
+                <p class="text-gray-700 font-bold mb-4 text-lg">Оқушының аты-жөнін енгізіңіз:</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input type="text" id="student-name-input" class="flex-grow border-2 border-yellow-300 rounded-xl p-3 focus:outline-none focus:border-yellow-500 text-lg shadow-inner" placeholder="Мысалы: Асан Үсенов" onkeypress="if(event.key === 'Enter') addStudent()">
+                    <button onclick="addStudent()" class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_#ca8a04] hover:translate-y-1 hover:shadow-[0_2px_0_#ca8a04] transition-all text-lg whitespace-nowrap">
+                        Қосу ➕
+                    </button>
+                </div>
+            </div>
+
+            <p class="text-center text-gray-500 font-semibold mb-6">Өз смайлигіңді тауып, бағаңды көтеру үшін үстіне бас (Макс: 10 бал)</p>
+
+            <!-- Students Container -->
+            <div id="students-container" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Students will be generated here -->
+                <p class="col-span-full text-center text-gray-400 italic font-semibold py-8">Тізімде әзірге ешкім жоқ. Оқушыны жоғарыдан қосыңыз.</p>
+            </div>
+
+            <!-- Download Button -->
+            <div class="text-center mt-10">
+                <button onclick="downloadResults()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-[0_5px_0_#2563eb] hover:translate-y-1 hover:shadow-[0_2px_0_#2563eb] transition-all text-lg">
+                    Нәтижені жүктеп алу (DOC) 📥
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEEDBACK PAGE (КЕРІ БАЙЛАНЫС) -->
+    <section id="feedback-page" class="page w-full max-w-3xl">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-purple-200 relative text-center">
+            <button onclick="showPage('home-page')" class="absolute -top-5 -left-5 bg-red-400 text-white font-bold py-3 px-6 rounded-full shadow-[0_5px_0_#b91c1c] hover:translate-y-1 hover:shadow-[0_2px_0_#b91c1c] transition-all">
+                ⬅️ Басты бет
+            </button>
+
+            <h2 class="text-3xl font-bold text-purple-600 mb-4 mt-4 sm:mt-0">Кері байланыс</h2>
+            <p class="text-lg text-gray-600 font-semibold mb-8">Бүгінгі сабақты қалай түсіндің?</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                <!-- Good -->
+                <button onclick="recordFeedback('good')" class="group flex flex-col items-center p-6 bg-green-50 border-4 border-green-200 rounded-3xl hover:bg-green-100 hover:border-green-400 hover:-translate-y-2 transition-all cursor-pointer">
+                    <span class="text-6xl mb-4 group-hover:scale-110 transition-transform">🤩</span>
+                    <span class="font-bold text-green-700 text-xl mb-4">Түсіндім</span>
+                    <span id="count-good" class="bg-green-500 text-white rounded-full w-14 h-14 flex items-center justify-center font-extrabold text-2xl shadow-md transition-transform duration-200">0</span>
+                </button>
+                
+                <!-- Question -->
+                <button onclick="recordFeedback('question')" class="group flex flex-col items-center p-6 bg-yellow-50 border-4 border-yellow-200 rounded-3xl hover:bg-yellow-100 hover:border-yellow-400 hover:-translate-y-2 transition-all cursor-pointer">
+                    <span class="text-6xl mb-4 group-hover:scale-110 transition-transform">🤔</span>
+                    <span class="font-bold text-yellow-700 text-xl mb-4 leading-tight">Сұрағым бар</span>
+                    <span id="count-question" class="bg-yellow-500 text-white rounded-full w-14 h-14 flex items-center justify-center font-extrabold text-2xl shadow-md transition-transform duration-200">0</span>
+                </button>
+                
+                <!-- Bad -->
+                <button onclick="recordFeedback('bad')" class="group flex flex-col items-center p-6 bg-red-50 border-4 border-red-200 rounded-3xl hover:bg-red-100 hover:border-red-400 hover:-translate-y-2 transition-all cursor-pointer">
+                    <span class="text-6xl mb-4 group-hover:scale-110 transition-transform">😢</span>
+                    <span class="font-bold text-red-700 text-xl mb-4">Түсінбедім</span>
+                    <span id="count-bad" class="bg-red-500 text-white rounded-full w-14 h-14 flex items-center justify-center font-extrabold text-2xl shadow-md transition-transform duration-200">0</span>
+                </button>
+            </div>
+
+            <button onclick="resetFeedbackCounts()" class="text-gray-400 hover:text-gray-600 underline font-semibold transition-colors mt-4">
+                Нәтижелерді тазарту (нөлдеу)
+            </button>
+        </div>
+    </section>
+
+    <script>
+        // --- NAVIGATION LOGIC ---
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // Show target page
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // --- GAME LOGIC ---
+        const draggables = document.querySelectorAll('.draggable-item');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        const originalContainer = document.getElementById('drag-items-container');
+        let draggedItem = null;
+        let selectedItemForClick = null; // For touch/click alternative
+
+        // Setup Drag and Drop events
+        draggables.forEach(draggable => {
+            // Drag Start
+            draggable.addEventListener('dragstart', (e) => {
+                draggedItem = draggable;
+                setTimeout(() => draggable.classList.add('opacity-50'), 0);
+            });
+
+            // Drag End
+            draggable.addEventListener('dragend', () => {
+                setTimeout(() => draggable.classList.remove('opacity-50'), 0);
+                draggedItem = null;
+                dropZones.forEach(zone => zone.classList.remove('drag-over'));
+            });
+
+            // Click Alternative for mobile/tablets
+            draggable.addEventListener('click', () => {
+                // Deselect previous
+                if (selectedItemForClick) {
+                    selectedItemForClick.classList.remove('ring-4', 'ring-blue-400', 'scale-110');
+                }
+                
+                // If clicking same item, just deselect
+                if (selectedItemForClick === draggable) {
+                    selectedItemForClick = null;
+                    return;
+                }
+
+                // Select new item
+                selectedItemForClick = draggable;
+                draggable.classList.add('ring-4', 'ring-blue-400', 'scale-110');
+            });
+        });
+
+        // Drop Zone Events
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', e => {
+                e.preventDefault(); // allow drop
+                zone.classList.add('drag-over');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                handleItemDrop(zone);
+            });
+
+            // Click Alternative drop
+            zone.addEventListener('click', () => {
+                if (selectedItemForClick) {
+                    draggedItem = selectedItemForClick; // Temporarily assign
+                    handleItemDrop(zone);
+                    selectedItemForClick.classList.remove('ring-4', 'ring-blue-400', 'scale-110');
+                    selectedItemForClick = null;
+                    draggedItem = null;
+                }
+            });
+        });
+
+        function handleItemDrop(zone) {
+            if (!draggedItem) return;
+
+            const currentItem = draggedItem;
+            const targetSeason = currentItem.getAttribute('data-target');
+            const zoneSeason = zone.getAttribute('data-season');
+
+            if (targetSeason === zoneSeason) {
+                // Correct match
+                zone.querySelector('.items-container').appendChild(currentItem);
+                currentItem.classList.remove('border-gray-200');
+                currentItem.classList.add('border-green-400', 'bg-green-50');
+                
+                // Little animation
+                currentItem.classList.add('bounce-anim');
+                setTimeout(() => currentItem.classList.remove('bounce-anim'), 1000);
+
+                // Disable dragging for placed items to make it easier
+                currentItem.setAttribute('draggable', 'false');
+                currentItem.style.cursor = 'default';
+
+                checkGameWin();
+            } else {
+                // Wrong match
+                currentItem.classList.add('shake-anim', 'bg-red-100', 'border-red-400');
+                setTimeout(() => {
+                    currentItem.classList.remove('shake-anim', 'bg-red-100', 'border-red-400');
+                }, 500);
+            }
+        }
+
+        function checkGameWin() {
+            const totalItems = document.querySelectorAll('.draggable-item').length;
+            let placedItems = 0;
+            dropZones.forEach(zone => {
+                placedItems += zone.querySelectorAll('.draggable-item').length;
+            });
+
+            if (placedItems === totalItems) {
+                setTimeout(() => {
+                    document.getElementById('game-success-modal').classList.remove('hidden');
+                    startConfetti();
+                }, 500);
+            }
+        }
+
+        function resetGame() {
+            document.getElementById('game-success-modal').classList.add('hidden');
+            stopConfetti();
+            
+            draggables.forEach(item => {
+                originalContainer.appendChild(item);
+                item.setAttribute('draggable', 'true');
+                item.style.cursor = 'grab';
+                item.classList.remove('border-green-400', 'bg-green-50');
+                item.classList.add('border-gray-200', 'bg-white');
+            });
+        }
+
+        // --- SELF ASSESSMENT LOGIC (Өзін-өзі бағалау) ---
+        let students = [];
+        const seasonEmojis = ['❄️', '🌸', '☀️', '🍁', '⛄', '🌷', '🏖️', '🍂', '🌦️', '🌈'];
+
+        function addStudent() {
+            const input = document.getElementById('student-name-input');
+            const name = input.value.trim();
+            if(name) {
+                // Кездейсоқ жыл мезгіліне қатысты смайлик таңдау
+                const randomEmoji = seasonEmojis[Math.floor(Math.random() * seasonEmojis.length)];
+                students.push({ id: Date.now(), name: name, score: 0, emoji: randomEmoji });
+                input.value = '';
+                renderStudents();
+            }
+        }
+
+        function incrementScore(id) {
+            const student = students.find(s => s.id === id);
+            if(student && student.score < 10) {
+                student.score++;
+                renderStudents();
+                
+                // Басқан кезде анимация беру
+                const card = document.getElementById(`student-card-${id}`);
+                if (card) {
+                    card.classList.add('bounce-anim');
+                    setTimeout(() => card.classList.remove('bounce-anim'), 500);
+                }
+                
+                // 10 балға жеткенде конфетти шығару
+                if (student.score === 10) {
+                    startConfetti(1500);
+                }
+            }
+        }
+
+        function renderStudents() {
+            const container = document.getElementById('students-container');
+            
+            if(students.length === 0) {
+                container.innerHTML = '<p class="col-span-full text-center text-gray-400 italic font-semibold py-8">Тізімде әзірге ешкім жоқ. Оқушыны жоғарыдан қосыңыз.</p>';
+                return;
+            }
+
+            container.innerHTML = students.map(s => `
+                <div id="student-card-${s.id}" class="bg-yellow-50 border-4 ${s.score === 10 ? 'border-green-400 bg-green-50' : 'border-yellow-200 hover:border-yellow-400'} rounded-3xl p-4 flex flex-col items-center justify-center cursor-pointer shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1" onclick="incrementScore(${s.id})">
+                    <p class="font-bold text-gray-800 text-center mb-2 text-md h-12 flex items-center justify-center w-full leading-tight">${s.name}</p>
+                    <div class="text-6xl mb-4 select-none drop-shadow-md">${s.emoji}</div>
+                    <div class="bg-white rounded-full px-5 py-2 shadow-inner border border-gray-100 min-w-[80px] text-center">
+                        <p class="text-2xl font-black ${s.score === 10 ? 'text-green-500' : 'text-blue-500'}">${s.score} <span class="text-sm text-gray-400 font-bold">/ 10</span></p>
+                    </div>
+                    ${s.score === 10 ? '<p class="text-green-500 font-bold mt-2 text-sm animate-pulse">Керемет! 🏆</p>' : ''}
+                </div>
+            `).join('');
+        }
+
+        // --- DOWNLOAD DOC LOGIC (Жүктеп алу) ---
+        function downloadResults() {
+            if (students.length === 0) {
+                // Егер тізім бос болса, ескерту шығару
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+                modal.innerHTML = `
+                    <div class="bg-white p-8 rounded-3xl text-center max-w-sm mx-4 shadow-2xl bounce-anim">
+                        <div class="text-5xl mb-4">⚠️</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Тізім бос!</h3>
+                        <p class="text-gray-600 mb-6">Жүктеп алу үшін алдымен оқушыларды қосыңыз.</p>
+                        <button onclick="this.parentElement.parentElement.remove()" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-full shadow-[0_4px_0_#2563eb] hover:translate-y-1 hover:shadow-[0_0px_0_#2563eb] transition-all">Түсіндім</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                return;
+            }
+
+            // DOC құжатының HTML құрылымын жасау
+            let docContent = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>Өзін-өзі бағалау нәтижелері</title>
+                </head>
+                <body style="font-family: 'Times New Roman', serif;">
+                    <h1 style="text-align: center; color: #d97706;">Өзін-өзі бағалау нәтижелері - Жыл мезгілдері</h1>
+                    <table border="1" style="width: 100%; border-collapse: collapse; text-align: center; font-size: 14pt;">
+                        <thead>
+                            <tr style="background-color: #fef08a;">
+                                <th style="padding: 10px;">№</th>
+                                <th style="padding: 10px;">Оқушының аты-жөні</th>
+                                <th style="padding: 10px;">Жинаған ұпайы (Макс: 10)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            students.forEach((student, index) => {
+                docContent += `
+                    <tr>
+                        <td style="padding: 8px;">${index + 1}</td>
+                        <td style="padding: 8px; font-weight: bold;">${student.name}</td>
+                        <td style="padding: 8px;">${student.score}</td>
+                    </tr>
+                `;
+            });
+
+            docContent += `
+                        </tbody>
+                    </table>
+                    <p style="text-align: right; margin-top: 20px; color: #6b7280;">Күні: ${new Date().toLocaleDateString('kk-KZ')} ж.</p>
+                </body>
+                </html>
+            `;
+
+            // Blob арқылы файлды жасау
+            const blob = new Blob(['\ufeff', docContent], {
+                type: 'application/msword'
+            });
+
+            // Автоматты түрде жүктеуді іске қосу
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Bagalau_Natijeleri.doc';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // --- FEEDBACK LOGIC (Кері байланыс) ---
+        let feedbackCounts = { good: 0, question: 0, bad: 0 };
+
+        function recordFeedback(type) {
+            feedbackCounts[type]++;
+            const countEl = document.getElementById(`count-${type}`);
+            countEl.textContent = feedbackCounts[type];
+            
+            // Басқан кездегі пульс анимациясы
+            countEl.classList.add('scale-150');
+            setTimeout(() => countEl.classList.remove('scale-150'), 200);
+
+            startConfetti(500); // Әр басқан сайын кішігірім конфетти
+        }
+
+        function resetFeedbackCounts() {
+            feedbackCounts = { good: 0, question: 0, bad: 0 };
+            document.getElementById('count-good').textContent = '0';
+            document.getElementById('count-question').textContent = '0';
+            document.getElementById('count-bad').textContent = '0';
+        }
+
+        // --- SIMPLE CONFETTI EFFECT ---
+        let confettiActive = false;
+        let confettiTimeout;
+        
+        function startConfetti(duration = 3000) {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.style.display = 'block';
+            confettiActive = true;
+
+            const pieces = [];
+            const colors = ['#fde047', '#4ade80', '#60a5fa', '#f472b6', '#a78bfa'];
+
+            for (let i = 0; i < 100; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 10 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 2 - 1,
+                    rot: Math.random() * 360,
+                    rotSpeed: Math.random() * 5 - 2.5
+                });
+            }
+
+            function animate() {
+                if (!confettiActive) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                pieces.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    p.rot += p.rotSpeed;
+
+                    if (p.y > canvas.height) p.y = -20;
+                    if (p.x > canvas.width) p.x = 0;
+                    if (p.x < 0) p.x = canvas.width;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                    ctx.restore();
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+            clearTimeout(confettiTimeout);
+            if (duration > 0) {
+                confettiTimeout = setTimeout(stopConfetti, duration);
+            }
+        }
+
+        function stopConfetti() {
+            confettiActive = false;
+            document.getElementById('confetti').style.display = 'none';
+        }
+
+        // Resize canvas on window resize
+        window.addEventListener('resize', () => {
+            if(confettiActive) {
+                const canvas = document.getElementById('confetti');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+
+    </script>
+</body>
+</html>
