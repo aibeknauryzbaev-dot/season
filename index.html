@@ -248,23 +248,23 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                 <!-- Good -->
                 <button onclick="recordFeedback('good')" class="group flex flex-col items-center p-6 bg-green-50 border-4 border-green-200 rounded-3xl hover:bg-green-100 hover:border-green-400 hover:-translate-y-2 transition-all cursor-pointer">
-                    <span class="text-6xl mb-4 group-hover:scale-110 transition-transform">🤩</span>
+                    <span class="text-6xl mb-4 group-hover:scale-110 transition-transform">☀️</span>
                     <span class="font-bold text-green-700 text-xl mb-4">Түсіндім</span>
                     <span id="count-good" class="bg-green-500 text-white rounded-full w-14 h-14 flex items-center justify-center font-extrabold text-2xl shadow-md transition-transform duration-200">0</span>
                 </button>
                 
                 <!-- Question -->
                 <button onclick="recordFeedback('question')" class="group flex flex-col items-center p-6 bg-yellow-50 border-4 border-yellow-200 rounded-3xl hover:bg-yellow-100 hover:border-yellow-400 hover:-translate-y-2 transition-all cursor-pointer">
-                    <span class="text-6xl mb-4 group-hover:scale-110 transition-transform">🤔</span>
+                    <span class="text-6xl mb-4 group-hover:scale-110 transition-transform">⛅</span>
                     <span class="font-bold text-yellow-700 text-xl mb-4 leading-tight">Сұрағым бар</span>
                     <span id="count-question" class="bg-yellow-500 text-white rounded-full w-14 h-14 flex items-center justify-center font-extrabold text-2xl shadow-md transition-transform duration-200">0</span>
                 </button>
                 
                 <!-- Bad -->
-                <button onclick="recordFeedback('bad')" class="group flex flex-col items-center p-6 bg-red-50 border-4 border-red-200 rounded-3xl hover:bg-red-100 hover:border-red-400 hover:-translate-y-2 transition-all cursor-pointer">
-                    <span class="text-6xl mb-4 group-hover:scale-110 transition-transform">😢</span>
-                    <span class="font-bold text-red-700 text-xl mb-4">Түсінбедім</span>
-                    <span id="count-bad" class="bg-red-500 text-white rounded-full w-14 h-14 flex items-center justify-center font-extrabold text-2xl shadow-md transition-transform duration-200">0</span>
+                <button onclick="recordFeedback('bad')" class="group flex flex-col items-center p-6 bg-blue-50 border-4 border-blue-200 rounded-3xl hover:bg-blue-100 hover:border-blue-400 hover:-translate-y-2 transition-all cursor-pointer">
+                    <span class="text-6xl mb-4 group-hover:scale-110 transition-transform">⛈️</span>
+                    <span class="font-bold text-blue-700 text-xl mb-4">Түсінбедім</span>
+                    <span id="count-bad" class="bg-blue-500 text-white rounded-full w-14 h-14 flex items-center justify-center font-extrabold text-2xl shadow-md transition-transform duration-200">0</span>
                 </button>
             </div>
 
@@ -545,6 +545,72 @@
 
         // --- FEEDBACK LOGIC (Кері байланыс) ---
         let feedbackCounts = { good: 0, question: 0, bad: 0 };
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playFeedbackSound(type) {
+            // Браузер саясатына байланысты аудио контекстті ояту
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            if (type === 'good') {
+                // Күн шуағы (ашық, көңілді сиқырлы дыбыс)
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.6);
+            } else if (type === 'question') {
+                // Бұлтты күн (желдің уілдеген жұмсақ дыбысы)
+                const bufferSize = audioCtx.sampleRate * 1;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(400, audioCtx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.5);
+                filter.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 1);
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 0.3);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                noise.start();
+            } else if (type === 'bad') {
+                // Жаңбыр/Найзағай (күркіреу дыбысы)
+                const bufferSize = audioCtx.sampleRate * 1.5;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(200, audioCtx.currentTime);
+                filter.frequency.linearRampToValueAtTime(50, audioCtx.currentTime + 1.5);
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.5);
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                noise.start();
+            }
+        }
 
         function recordFeedback(type) {
             feedbackCounts[type]++;
@@ -554,6 +620,9 @@
             // Басқан кездегі пульс анимациясы
             countEl.classList.add('scale-150');
             setTimeout(() => countEl.classList.remove('scale-150'), 200);
+
+            // Дыбысты қосу
+            playFeedbackSound(type);
 
             startConfetti(500); // Әр басқан сайын кішігірім конфетти
         }
